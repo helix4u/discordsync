@@ -30,15 +30,15 @@ a provider retains no data. The operator does not use the archive to train model
 
 ## Retention
 
-Support records are kept while needed for an active case. The selected retention
-windows for closed cases are 90 days for message copies and 14 days for downloaded
-attachments. Open cases are subject to a necessity review every 90 days.
+DiscordSync's conversation archive and generated case caches use a rolling
+30-day retention limit for raw message content.
+Downloaded attachments use a rolling 14-day limit. Age is measured from the
+original Discord message timestamp, including for open support cases.
 
-Automatic expiry is currently disabled. The helper produces retention previews,
-and removal is controlled by the operator. Existing historical copies can remain
-until their review and cleanup have been completed. The selected windows should
-therefore not be interpreted as a guarantee that every existing copy has already
-been removed on those dates.
+Cleanup runs during synchronization and through hourly local housekeeping while
+the operator's Windows account is signed in. Missed housekeeping resumes at
+sign-in. Expired content is excluded from subsequent synchronization and backfill.
+Generated local case caches follow the same content limits.
 
 Minimal case dates, status, counts, and identifiers can remain when needed for
 support reporting or to prevent removed content from being copied back. They
@@ -46,9 +46,10 @@ are removed when no longer needed or when an applicable deletion request require
 it. Generalized troubleshooting findings can be retained after identifying
 details have been removed.
 
-Recovery backups can contain older copies. Removal requests include a review of
-those copies. Restoring an archive must reapply current deletion records before
-the restored data is used. Backup copies are not made public in this repository.
+Recovery snapshots contain case metadata, without raw conversation bodies or
+downloaded attachments. Earlier full-data snapshots are replaced with verified
+metadata-only copies. Restoring an archive must preserve current deletion and
+retention records. These snapshots are not published in this repository.
 
 ## Correction and deletion requests
 
@@ -68,7 +69,8 @@ Deleting copied records does not delete the original messages on Discord.
 ## Protection and contact
 
 Access to copied support records is restricted to the operator's support
-workflow. DiscordSync uses HTTPS when retrieving information from Discord.
+workflow. The working archive, generated case caches, and recovery snapshots are
+encrypted at rest. DiscordSync uses HTTPS when retrieving information from Discord.
 
 Questions, correction requests, deletion requests, or concerns about DiscordSync
 can be raised with helix4u through the support conversation in which the helper
